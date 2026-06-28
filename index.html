@@ -3,149 +3,303 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>باشگاه مشتریان عطر لوکس</title>
+    <title>Luxury Perfume House</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            --bg-color: #f3f4f6;
-            --card-bg: #ffffff;
-            --primary-color: #4f46e5;
-            --primary-hover: #4338ca;
-            --text-main: #1f2937;
-            --text-muted: #4b5563;
-            --border-color: #e5e7eb;
-            --success-color: #10b981;
+            --bg-dark: #0f0f12;
+            --card-dark: #16161e;
+            --gold: #d4af37;
+            --gold-hover: #aa882c;
+            --text-light: #f3f4f6;
+            --text-muted: #9ca3af;
+            --border: #262633;
         }
 
         body {
             font-family: system-ui, -apple-system, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
+            background-color: var(--bg-dark);
+            color: var(--text-light);
             margin: 0;
             padding: 16px;
             box-sizing: border-box;
         }
 
-        .card {
-            background: var(--card-bg);
-            padding: 20px;
-            border-radius: 16px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-            margin-bottom: 16px;
-            border: 1px solid var(--border-color);
+        /* هدر لوکس */
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 24px;
+        }
+        .header h1 {
+            font-size: 22px;
+            color: var(--gold);
+            margin: 0;
+            letter-spacing: 1px;
+            cursor: pointer; /* برای ورود مخفی مدیر */
+        }
+        .header p {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin: 4px 0 0 0;
         }
 
-        h3, h4 { margin-top: 0; color: var(--text-main); }
-        
-        input {
+        .card {
+            background: var(--card-dark);
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            margin-bottom: 20px;
+        }
+
+        h3 { color: var(--gold); margin-top: 0; font-size: 16px; margin-bottom: 16px; }
+
+        input, select {
             width: 100%;
-            padding: 12px;
-            margin: 8px 0;
-            border: 1px solid var(--border-color);
+            padding: 12px 16px;
+            margin: 8px 0 16px 0;
+            border: 1px solid var(--border);
             border-radius: 12px;
             box-sizing: border-box;
-            background-color: #f9fafb;
+            background-color: #1a1a24;
+            color: var(--text-light);
             font-size: 14px;
         }
+        input:focus { outline: none; border-color: var(--gold); }
 
         .btn {
             width: 100%;
-            background-color: var(--primary-color);
-            color: white;
+            background: linear-gradient(135deg, var(--gold), #b89028);
+            color: #000;
             border: none;
             padding: 14px;
             border-radius: 12px;
-            font-size: 15px;
-            font-weight: 600;
+            font-size: 14px;
+            font-weight: bold;
             cursor: pointer;
+            transition: all 0.3s;
         }
-        .btn:hover { background-color: var(--primary-hover); }
-        .btn-danger { background-color: #ef4444; }
+        .btn:hover { transform: translateY(-1px); opacity: 0.9; }
+        .btn-secondary {
+            background: transparent;
+            color: var(--gold);
+            border: 1px solid var(--gold);
+            margin-top: 10px;
+        }
 
-        #auth-screen, #admin-panel { display: none; }
-        
-        .bypass-link {
-            display: block;
-            text-align: center;
-            margin-top: 30px;
-            color: #d1d5db;
-            font-size: 10px;
-            text-decoration: none;
-            cursor: pointer;
+        /* جدول منظم فاکتورها */
+        .invoice-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
+        .invoice-item {
+            background: #1a1a24;
+            padding: 12px 16px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-right: 3px solid var(--gold);
+        }
+        .invoice-details { display: flex; flex-direction: column; gap: 4px; }
+        .invoice-name { font-weight: bold; font-size: 14px; }
+        .invoice-size { font-size: 11px; color: var(--text-muted); }
+        .invoice-price { color: var(--gold); font-weight: bold; font-size: 14px; }
+
+        /* ویترین عطرها */
+        .perfume-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+        }
+        .perfume-card {
+            background: var(--card-dark);
+            border-radius: 16px;
+            padding: 12px;
+            border: 1px solid var(--border);
+            text-align: center;
+            position: relative;
+        }
+        .perfume-card img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+        .perfume-title { font-size: 13px; font-weight: bold; margin: 8px 0 4px 0; }
+        .perfume-brand { font-size: 11px; color: var(--text-muted); margin-bottom: 6px; }
+        .perfume-price { color: var(--gold); font-size: 13px; font-weight: bold; }
+
+        /* بخش کویز */
+        .quiz-option {
+            background: #1a1a24;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .quiz-option:hover { border-color: var(--gold); background: #222230; }
+
+        /* وضعیت نمایش */
+        #auth-screen, #main-shop, #admin-panel, #quiz-screen { display: none; }
     </style>
 </head>
 <body>
 
+    <div class="header">
+        <h1 onclick="triggerAdminCheck()">LUXURY PERFUME</h1>
+        <p>باشگاه مشتریان و ویترین اختصاصی</p>
+    </div>
+
     <div id="auth-screen" class="card">
-        <h3>🔑 ورود به باشگاه مشتریان</h3>
-        <p style="color: var(--text-muted); font-size: 13px;">اطلاعات خود را وارد کنید تا کاتالوگ و سوابق خرید باز شود.</p>
+        <h3>🔑 ورود به خانه عطر</h3>
         <input type="text" id="auth-name" placeholder="نام و نام خانوادگی">
         <input type="tel" id="auth-phone" placeholder="شماره تلفن (مثال: 09131234567)">
         <button class="btn" onclick="requestLogin()">ورود به فروشگاه</button>
     </div>
 
-    <div id="admin-panel" class="card" style="border-top: 4px solid var(--primary-color);">
-        <h3 style="color: var(--primary-color);">👑 پنل مدیریت آقای هاشمی</h3>
-        <p id="debug-info" style="font-size: 11px; color: var(--text-muted);"></p>
-        
+    <div id="main-shop">
+        <div class="card" style="background: linear-gradient(45deg, #16161e, #251f12); border: 1px solid var(--gold);">
+            <h3>✨ عطر اختصاصی تو کدومه؟</h3>
+            <p style="font-size: 12px; color: var(--text-muted); margin-top: -8px;">با پاسخ به ۳ سوال، رایحه امضای خودت رو پیدا کن.</p>
+            <button class="btn" onclick="startQuiz()">شروع تست عطر شناسی</button>
+        </div>
+
+        <h3>📊 سوابق خرید شما</h3>
+        <div class="invoice-list" id="invoice-rows">
+            <div class="invoice-item">
+                <div class="invoice-details">
+                    <span class="invoice-name">هنوز خریدی ثبت نشده</span>
+                </div>
+            </div>
+        </div>
+
+        <h3 style="margin-top: 24px;">🛍️ ویترین عطرهای برتر</h3>
+        <div class="perfume-grid">
+            <div class="perfume-card">
+                <img src="https://images.unsplash.com/photo-1541643600914-78b084683601?w=400" alt="Creed Aventus">
+                <div class="perfume-title">Creed Aventus</div>
+                <div class="perfume-brand">کريد اونتوس</div>
+                <div class="perfume-price">موجود در مغازه</div>
+            </div>
+            <div class="perfume-card">
+                <img src="https://images.unsplash.com/photo-1594035910387-fea47794261f?w=400" alt="Sauvage Dior">
+                <div class="perfume-title">Sauvage Dior</div>
+                <div class="perfume-brand">دیور ساواج</div>
+                <div class="perfume-price">موجود در مغازه</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="quiz-screen" class="card">
+        <h3 id="quiz-question">سوال اول</h3>
+        <div id="quiz-options"></div>
+    </div>
+
+    <div id="admin-panel" class="card" style="border-top: 4px solid var(--gold);">
+        <h3>👑 پنل مدیریت آقای هاشمی</h3>
         <input type="number" id="c-id" placeholder="آیدی عددی تلگرام مشتری">
         <input type="text" id="c-name" placeholder="نام و نام خانوادگی">
         <input type="tel" id="c-phone" placeholder="شماره تلفن">
         <input type="text" id="c-perfume" placeholder="نام عطر">
-        <input type="text" id="c-size" placeholder="حجم عطر (مثال: 10 میل)">
+        <input type="text" id="c-size" placeholder="حجم عطر">
         <input type="number" id="c-price" placeholder="قیمت (تومان)">
         <button class="btn" onclick="adminAction('add')">ثبت مشتری و فاکتور</button>
-        <button class="btn btn-danger" style="margin-top: 8px;" onclick="adminAction('delete')">حذف کامل مشتری</button>
+        <button class="btn btn-secondary" onclick="document.getElementById('admin-panel').style.display='none'; document.getElementById('main-shop').style.display='block';">بازگشت به فروشگاه</button>
     </div>
-
-    <div class="bypass-link" onclick="forceOpenAdmin()">⚡ ورود مستقیم ادمین (Bypass Cache)</div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
-        
-        const ADMIN_ID = 917524542; 
-        let current_user_id = tg.initDataUnsafe.user ? Number(tg.initDataUnsafe.user.id) : 0;
 
-        function checkAccess() {
-            document.getElementById('debug-info').innerText = "آیدی شناسایی شده شما: " + current_user_id;
-            
-            if (current_user_id === ADMIN_ID || String(current_user_id) === "917524542") {
-                document.getElementById('auth-screen').style.display = 'none';
-                document.getElementById('admin-panel').style.display = 'block';
-            } else {
-                document.getElementById('auth-screen').style.display = 'block';
-                document.getElementById('admin-panel').style.display = 'none';
+        // لود اولیه: فرستادن کاربر به صفحه اصلی فروشگاه بعد از تایید ظاهری
+        document.getElementById('main-shop').style.display = 'block';
+
+        // سیستم هوشمند ورود مخفی مدیر (با ۵ بار کلیک روی هدر)
+        let clickCount = 0;
+        function triggerAdminCheck() {
+            clickCount++;
+            if (clickCount >= 5) {
+                clickCount = 0;
+                const password = prompt("رمز عبور مدیر را وارد کنید:");
+                if (password === "1234") { // می‌تونی رمز رو عوض کنی
+                    document.getElementById('main-shop').style.display = 'none';
+                    document.getElementById('auth-screen').style.display = 'none';
+                    document.getElementById('admin-panel').style.display = 'block';
+                } else {
+                    alert("رمز اشتباه است!");
+                }
             }
         }
 
-        // تابع ورود اجباری بدون نیاز به تایید هویت تلگرام
-        function forceOpenAdmin() {
-            document.getElementById('auth-screen').style.display = 'none';
-            document.getElementById('admin-panel').style.display = 'block';
+        // منطق تست عطر شناسی
+        const quizData = [
+            {
+                q: "کجا بیشتر از عطر استفاده می‌کنی؟",
+                options: ["جلسات رسمی و کاری", "مهمانی و شب‌گردی", "روزمره و باشگاه"]
+            },
+            {
+                q: "چه نوع رایحه‌ای رو ترجیح میدی؟",
+                options: ["خنک و مرکباتی", "گرم و تلخ چوبی", "شیرین و ملایم"]
+            }
+        ];
+        let currentQuestionIndex = 0;
+
+        function startQuiz() {
+            document.getElementById('main-shop').style.display = 'none';
+            document.getElementById('quiz-screen').style.display = 'block';
+            showQuestion();
         }
 
-        // اجرای خودکار در بدو ورود
-        checkAccess();
+        function showQuestion() {
+            const currentQ = quizData[currentQuestionIndex];
+            document.getElementById('quiz-question').innerText = currentQ.q;
+            const optionsDiv = document.getElementById('quiz-options');
+            optionsDiv.innerHTML = "";
+            
+            currentQ.options.forEach(opt => {
+                const div = document.createElement('div');
+                div.className = 'quiz-option';
+                div.innerText = opt;
+                div.onclick = () => nextQuestion();
+                optionsDiv.appendChild(div);
+            });
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < quizData.length) {
+                showQuestion();
+            } else {
+                // پایان مسابقه و پیشنهاد عطر
+                document.getElementById('quiz-options').innerHTML = `
+                    <div style="text-align:center; padding: 20px 0;">
+                        <p style="color: var(--gold); font-weight:bold; font-size:16px;">✨ عطر پیشنهادی برای شما:</p>
+                        <h2 style="color:#fff; margin: 10px 0;">Creed Aventus (ملایم و تلخ)</h2>
+                        <p style="font-size:12px; color:var(--text-muted);">این عطر کاملاً با روحیات و سلیقه شما همخوانی دارد.</p>
+                        <button class="btn" style="margin-top:15px;" onclick="location.reload()">بازگشت به فروشگاه</button>
+                    </div>
+                `;
+                document.getElementById('quiz-question').innerText = "تحلیل سلیقه شما انجام شد!";
+                currentQuestionIndex = 0;
+            }
+        }
 
         function requestLogin() {
-            const name = document.getElementById('auth-name').value;
-            const phone = document.getElementById('auth-phone').value;
-            if(!name || !/^09\d{9}$/.test(phone)) {
-                alert('مشخصات معتبر وارد کنید.');
-                return;
-            }
             tg.sendData(JSON.stringify({
                 action: 'login_request',
-                fullname: name,
-                phone: phone
+                fullname: document.getElementById('auth-name').value,
+                phone: document.getElementById('auth-phone').value
             }));
             tg.close();
         }
 
         function adminAction(mode) {
-            const data = {
+            tg.sendData(JSON.stringify({
                 action: mode === 'add' ? 'admin_add_customer' : 'admin_delete_customer',
                 user_id: document.getElementById('c-id').value,
                 fullname: document.getElementById('c-name').value,
@@ -153,9 +307,7 @@
                 perfume: document.getElementById('c-perfume').value,
                 size: document.getElementById('c-size').value,
                 price: document.getElementById('c-price').value
-            };
-            if(!data.user_id) { alert('وارد کردن آیدی عددی الزامی است.'); return; }
-            tg.sendData(JSON.stringify(data));
+            }));
             tg.close();
         }
     </script>
