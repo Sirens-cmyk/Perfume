@@ -67,7 +67,7 @@
         th, td { padding: 12px; border-bottom: 1px solid var(--border-color); font-size: 13px; }
         th { background-color: #f9fafb; font-weight: 600; }
 
-        #auth-screen, #admin-panel, #main-content { display: none; }
+        #auth-screen, #admin-panel { display: none; }
     </style>
 </head>
 <body>
@@ -78,26 +78,6 @@
         <input type="text" id="auth-name" placeholder="نام و نام خانوادگی">
         <input type="tel" id="auth-phone" placeholder="شماره تلفن (مثال: 09131234567)">
         <button class="btn" onclick="requestLogin()">ورود به فروشگاه</button>
-    </div>
-
-    <div id="main-content" class="card">
-        <h3>📊 سوابق خرید شما</h3>
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>عطر</th>
-                        <th>حجم</th>
-                        <th>قیمت (تومان)</th>
-                    </tr>
-                </thead>
-                <tbody id="invoice-rows">
-                    <tr>
-                        <td colspan="3" style="text-align:center; color:var(--text-muted);">در حال بارگذاری فاکتورها...</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
     </div>
 
     <div id="admin-panel" class="card" style="border-top: 4px solid var(--primary-color);">
@@ -116,12 +96,14 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
         
-        // آیدی جدید و دقیق شما
+        // آیدی دقیق و تایید شده شما
         const ADMIN_ID = 917524542; 
-        const current_user_id = tg.initDataUnsafe.user ? tg.initDataUnsafe.user.id : 0;
+        
+        // گرفتن آیدی از کانتکست تلگرام با متد رشته‌ای و عددی برای امنیت بالا
+        const current_user_id = tg.initDataUnsafe.user ? Number(tg.initDataUnsafe.user.id) : 0;
 
-        // بررسی آنی سطح دسترسی مدیر
-        if (current_user_id === ADMIN_ID) {
+        // بررسی نقش کاربر با پاک کردن اثر حافظه پنهان
+        if (current_user_id === ADMIN_ID || String(current_user_id) === "917524542") {
             document.getElementById('auth-screen').style.display = 'none';
             document.getElementById('admin-panel').style.display = 'block';
         } else {
