@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -116,14 +116,17 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
         
+        // آیدی جدید و دقیق شما
         const ADMIN_ID = 917524542; 
         const current_user_id = tg.initDataUnsafe.user ? tg.initDataUnsafe.user.id : 0;
 
-        // بررسی نقش کاربر در بدو ورود
+        // بررسی آنی سطح دسترسی مدیر
         if (current_user_id === ADMIN_ID) {
+            document.getElementById('auth-screen').style.display = 'none';
             document.getElementById('admin-panel').style.display = 'block';
         } else {
             document.getElementById('auth-screen').style.display = 'block';
+            document.getElementById('admin-panel').style.display = 'none';
         }
 
         function requestLogin() {
