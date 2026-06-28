@@ -174,16 +174,23 @@
             });
         }
 
-        function showResult() {
+                function showResult() {
             document.getElementById('quiz-question').innerText = "✨ عطر پیشنهادی شما:";
             document.getElementById('quiz-options').innerHTML = `
                 <div style="text-align:center; padding:15px 0;">
                     <h2 style="color:var(--gold); margin-bottom:10px;">Bleu De Chanel</h2>
                     <p style="font-size:13px; color:var(--text-muted);">هماهنگی کامل با استایل و روحیات شما.</p>
-                    <button class="btn" style="margin-top:20px;" onclick="location.reload()">بازگشت به فروشگاه</button>
+                    <button class="btn" style="margin-top:20px;" onclick="backToShopFromQuiz()">بازگشت به فروشگاه</button>
                 </div>`;
-            currentQ = 0;
         }
+
+        // 👈 این تابع جدید رو هم دقیقاً زیر تابع بالا اضافه کن
+        function backToShopFromQuiz() {
+            currentQ = 0; // صفر کردن شمارنده سوالات برای دفعه بعدی
+            document.getElementById('page-quiz').style.style.display = 'none'; // مخفی کردن بخش سوالات
+            document.getElementById('page-shop').style.display = 'block'; // باز کردن صفحه اصلی فروشگاه
+        }
+
     </script>
 </body>
 </html>
