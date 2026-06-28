@@ -3,134 +3,229 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>فروشگاه عطر</title>
+    <title>فروشگاه لوکس عطر</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { font-family: sans-serif; background-color: #f4f4f9; margin: 0; padding: 15px; color: #333; }
-        .card { background: white; padding: 15px; border-radius: 10px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .btn { background: #0088cc; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; width: 100%; margin-top: 5px; font-size: 16px; font-weight: bold; }
-        select, input { width: 100%; padding: 10px; margin: 5px 0 15px 0; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
-        img { max-width: 120px; border-radius: 5px; display: block; margin: 0 auto; }
-        h2 { font-size: 18px; margin: 10px 0; text-align: center; }
-        .price { color: green; font-weight: bold; text-align: center; }
-        #admin-panel { display: none; background: #ffe6e6; border: 2px dashed #ff4d4d; }
+        :root {
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --primary-color: #6366f1;
+            --primary-hover: #4f46e5;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+            --success-color: #10b981;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 12px;
+            box-sizing: border-box;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 16px;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
+            margin-bottom: 16px;
+            border: 1px solid var(--border-color);
+        }
+
+        h2, h3 { margin-top: 0; color: var(--text-main); font-weight: 700; }
+        
+        input, select {
+            width: 100%;
+            padding: 10px 12px;
+            margin: 8px 0;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            box-sizing: border-box;
+            background-color: #f9fafb;
+            color: var(--text-main);
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background-color: #fff;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn:hover { background-color: var(--primary-hover); }
+        .btn-danger { background-color: #ef4444; }
+        .btn-danger:hover { background-color: #dc2626; }
+
+        /* استیل جدول فاکتورها */
+        .table-container { overflow-x: auto; margin-top: 10px; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: right;
+            font-size: 13px;
+        }
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        th { background-color: #f3f4f6; color: var(--text-main); font-weight: 600; }
+
+        /* استیل کاتالوگ عطرها */
+        .perfume-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        .perfume-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+        }
+        .perfume-card img {
+            width: 100%;
+            height: 110px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        .price { color: var(--success-color); font-weight: bold; font-size: 14px; margin: 6px 0; }
+
+        #auth-screen, #main-content, #admin-panel { display: none; }
     </style>
 </head>
 <body>
 
-    <div class="card" id="admin-panel">
-        <h3 style="color: #cc0000; text-align: center;">🛠 پنل مدیریت عطر و مشتریان</h3>
-        
-        <h4>➕ افزودن عطر جدید</h4>
-        <input type="text" id="p-name" placeholder="نام عطر">
-        <input type="text" id="p-brand" placeholder="برند عطر">
-        <select id="p-temp"><option value="گرم">گرم</option><option value="خنک">خنک</option><option value="معتدل">معتدal</option></select>
-        <select id="p-scent"><option value="تلخ">تلخ</option><option value="شیرین">شیرین</option><option value="ملایم">ملایم</option></select>
-        <select id="p-job"><option value="کارمند">کارمند</option><option value="دانشجو">دانشجو</option><option value="پزشک/مهندس">پزشک/مهندس</option></select>
-        <input type="text" id="p-price" placeholder="قیمت (مثلا ۴,۵۰۰,۰۰۰ تومان)">
-        <button class="btn" style="background: #cc0000;" onclick="addPerfume()">ثبت عطر جدید</button>
-        
-        <hr style="margin: 20px 0;">
-        
-        <h4>👤 ثبت خرید/مشتری جدید</h4>
-        <input type="text" id="c-name" placeholder="نام مشتری">
-        <input type="number" id="c-id" placeholder="آیدی عددی تلگرام مشتری">
-        <input type="number" id="c-amount" placeholder="مبلغ خرید به تومان (مثلا ۲۵۰۰۰۰۰)">
-        <button class="btn" style="background: #cc0000;" onclick="addCustomer()">ثبت خرید مشتری</button>
+    <div id="auth-screen" class="card">
+        <h3>🔑 ورود به باشگاه مشتریان</h3>
+        <p style="color: var(--text-muted); font-size: 13px;">لطفاً اطلاعات خود را وارد کنید تا در صورت عضویت، کاتالوگ باز شود.</p>
+        <input type="text" id="auth-name" placeholder="نام و نام خانوادگی">
+        <input type="tel" id="auth-phone" placeholder="شماره تلفن (مثال: 09131234567)">
+        <button class="btn" onclick="requestLogin()">ورود به فروشگاه</button>
     </div>
 
-    <div class="card">
-        <h3 style="text-align: center;">🕵️ چه عطری به من میاد؟</h3>
-        <label>طبع مورد علاقه:</label>
-        <select id="f-temp"><option value="همه">همه طبع‌ها</option><option value="گرم">گرم</option><option value="خنک">خنک</option><option value="معتدل">معتدل</option></select>
-        <label>رایحه مورد علاقه:</label>
-        <select id="f-scent"><option value="همه">همه رایحه‌ها</option><option value="تلخ">تلخ</option><option value="شیرین">شیرین</option><option value="ملایم">ملایم</option></select>
-        <label>شغل یا محیط استفاده:</label>
-        <select id="f-job"><option value="همه">همه فضاها</option><option value="کارمند">کارمند</option><option value="دانشجو">دانشجو</option><option value="پزشک/مهندس">پزشک/مهندس</option></select>
-        <button class="btn" onclick="filterPerfumes()">اعمال فیلتر هوشمند</button>
+    <div id="main-content">
+        <div class="card">
+            <h3>📊 سوابق خرید شما</h3>
+            <div class="table-container">
+                <table id="invoice-table">
+                    <thead>
+                        <tr>
+                            <th>تاریخ</th>
+                            <th>شرح کالا</th>
+                            <th>مبلغ (تومان)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        </tbody>
+                </table>
+            </div>
+        </div>
+
+        <h3>🛍️ جدیدترین عطرهای مغازه</h3>
+        <div class="perfume-grid" id="perfume-list"></div>
     </div>
 
-    <div id="perfume-list"></div>
+    <div id="admin-panel">
+        <div class="card" style="border-top: 4px solid var(--primary-color);">
+            <h3 style="color: var(--primary-color);">👑 پنل مدیریت آقای هاشمی</h3>
+            
+            <h4>➕ اضافه/ویرایش مشتری</h4>
+            <input type="number" id="c-id" placeholder="آیدی عددی تلگرام مشتری">
+            <input type="text" id="c-name" placeholder="نام و نام خانوادگی">
+            <input type="tel" id="c-phone" placeholder="شماره تلفن">
+            <input type="text" id="c-perfume" placeholder="چه عطری خریده؟">
+            <input type="text" id="c-size" placeholder="حجم عطر (مثلاً 50 میل)">
+            <input type="number" id="c-price" placeholder="قیمت خرید (تومان)">
+            <button class="btn" onclick="adminManageCustomer('add')">ثبت خرید و مشتری</button>
+            <button class="btn btn-danger" style="margin-top: 5px;" onclick="adminManageCustomer('delete')">حذف کامل مشتری</button>
+            
+            <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 15px 0;">
+            
+            <h4>✨ اضافه کردن عطر جدید به ویترین</h4>
+            <input type="text" id="p-name" placeholder="نام عطر">
+            <input type="text" id="p-brand" placeholder="برند عطر">
+            <input type="text" id="p-price" placeholder="قیمت کاتالوگ">
+            <input type="text" id="p-img" placeholder="لینک عکس عطر">
+            <button class="btn" style="background-color: var(--success-color);" onclick="adminAddPerfume()">افزودن به کاتالوگ</button>
+        </div>
+    </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
+        
+        const ADMIN_ID = 1791538940; 
+        const current_user_id = tg.initDataUnsafe.user ? tg.initDataUnsafe.user.id : 0;
 
-        // تایید هویت ادمین (آیدی عددی خودت)
-        const ADMIN_ID = 1792938046; 
-        if (tg.initDataUnsafe.user && tg.initDataUnsafe.user.id === ADMIN_ID) {
+        // در بدو ورود چک میکنیم ادمین است یا کاربر عادی
+        if (current_user_id === ADMIN_ID) {
             document.getElementById('admin-panel').style.display = 'block';
+            document.getElementById('main-content').style.display = 'block';
+        } else {
+            document.getElementById('auth-screen').style.display = 'block';
         }
 
-        let allPerfumes = [];
-
-        // لود کردن عطرها از فایل JSON
-        fetch('perfumes.json')
-            .then(res => res.json())
-            .then(data => {
-                allPerfumes = data;
-                renderList(allPerfumes);
-            }).catch(err => console.error("Error loading perfumes:", err));
-
-        function renderList(perfumes) {
-            const listDiv = document.getElementById('perfume-list');
-            listDiv.innerHTML = '';
-            if(perfumes.length === 0) {
-                listDiv.innerHTML = '<p style="text-align:center;">عطری با این مشخصات پیدا نشد! 🙁</p>';
+        // ۱. درخواست ورود کاربر
+        function requestLogin() {
+            const name = document.getElementById('auth-name').value;
+            const phone = document.getElementById('auth-phone').value;
+            if(!name || !/^09\d{9}$/.test(phone)) {
+                alert('لطفاً نام و شماره تلفن ۱۱ رقمی معتبر وارد کنید.');
                 return;
             }
-            perfumes.forEach(p => {
-                listDiv.innerHTML += `
-                    <div class="card">
-                        <img src="${p.image}" alt="${p.name}">
-                        <h2>${p.name} (${p.brand})</h2>
-                        <p style="text-align:center; color:#666;">مناسب برای: ${p.temp} | ${p.scent} | ${p.job}</p>
-                        <p class="price">${p.price}</p>
-                        <button class="btn" style="background:#28a745;" onclick="sendOrder('${p.name}')">🛒 سفارش این عطر</button>
-                    </div>
-                `;
-            });
+            // ارسال اطلاعات به ربات برای تایید صلاحیت
+            tg.sendData(JSON.stringify({
+                action: 'login_request',
+                fullname: name,
+                phone: phone
+            }));
         }
 
-        function filterPerfumes() {
-            const temp = document.getElementById('f-temp').value;
-            const scent = document.getElementById('f-scent').value;
-            const job = document.getElementById('f-job').value;
-
-            const filtered = allPerfumes.filter(p => {
-                return (temp === 'همه' || p.temp === temp) &&
-                       (scent === 'همه' || p.scent === scent) &&
-                       (job === 'همه' || p.job === job);
-            });
-            renderList(filtered);
-        }
-
-        function sendOrder(name) {
-            tg.sendData(JSON.stringify({action: "order", item: name}));
-        }
-
-        function addPerfume() {
+        // ۲. دکمه‌های پنل مدیریت
+        function adminManageCustomer(mode) {
             const data = {
-                action: "add_perfume",
+                action: mode === 'add' ? 'admin_add_customer' : 'admin_delete_customer',
+                user_id: document.getElementById('c-id').value,
+                fullname: document.getElementById('c-name').value,
+                phone: document.getElementById('c-phone').value,
+                perfume: document.getElementById('c-perfume').value,
+                size: document.getElementById('c-size').value,
+                price: document.getElementById('c-price').value
+            };
+            if(!data.user_id) { alert('آیدی عددی الزامی است.'); return; }
+            tg.sendData(JSON.stringify(data));
+        }
+
+        function adminAddPerfume() {
+            const data = {
+                action: 'admin_add_perfume',
                 name: document.getElementById('p-name').value,
                 brand: document.getElementById('p-brand').value,
-                temp: document.getElementById('p-temp').value,
-                scent: document.getElementById('p-scent').value,
-                job: document.getElementById('p-job').value,
-                price: document.getElementById('p-price').value
+                price: document.getElementById('p-price').value,
+                img: document.getElementById('p-img').value
             };
             tg.sendData(JSON.stringify(data));
         }
 
-        function addCustomer() {
-            const data = {
-                action: "add_customer",
-                name: document.getElementById('c-name').value,
-                chat_id: parseInt(document.getElementById('c-id').value),
-                amount: parseInt(document.getElementById('c-amount').value)
-            };
-            tg.sendData(JSON.stringify(data));
-        }
+        // شبیه‌سازی رندر جدول فاکتورها (این بخش دیتا را از فایل یا ربات می‌گیرد)
+        // تکمیلی: ربات می‌تواند اطلاعات سفارشات را در قالب پاسخ یا وب‌سرویس ارسال کند.
     </script>
 </body>
 </html>
