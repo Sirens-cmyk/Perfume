@@ -171,6 +171,191 @@
         tg.expand();
         
         // آیدی عددی تلگرام شما برای مدیریت
+        const ADMIN_ID = 917524542; 
+        const current_user_id = tg.initDataUnsafe.user ? tg.initDataUnsafe.user.id : 0;
+
+        // منطق ورود بدون خطا و مستقیم برای ادمین
+        if (current_user_id === ADMIN_ID) {
+            document.getElementById('auth-screen').style.display = 'none'; // فرم مشخصات پنهان شود
+            document.getElementById('admin-panel').style.display = 'block'; // پنل مدیریت باز شود
+            document.getElementById('main-content').style.display = 'block'; // کاتالوگ باز شود
+            document.getElementById('user-stats-card').style.display = 'none'; // جدول فاکتورهای شخصی ادمین مخفی شود
+        } else {
+            // اگر کاربر عادی بود، اول فقط صفحه فرم ورود را ببیند
+            document.getElementById('auth-screen').style.display = 'block';
+            document.getElementById('admin-panel').style.display = 'none';
+            document.getElementById('main-content').style.display = 'none';
+        }
+
+        // درخواست ورود کاربر عادی
+        function requestLogin() {
+            const name = document.getElementById('auth-name').value;
+            const phone = document.getElementById('auth-phone').value;
+            if(!name || !/^09\d{9}$/.test(phone)) {
+                alert('لطفاً نام و شماره تلفن ۱۱ رقمی معتبر وارد کنید.');
+                return;
+            }
+            tg.sendData(JSON.stringify({
+                action: 'login_request',
+                fullname: name,
+                phone: phone
+            }));
+        }
+
+        // دکمه‌های مدیریت حسین
+        function adminManageCustomer(mode) {
+            const data = {
+                action: mode === 'add' ? 'admin_add_customer' : 'admin_delete_customer',
+                user_id: document.getElementById('c-id').value,
+                fullname: document.getElementById('c-name').value,
+                phone: document.getElementById('c-phone').value,
+                perfume: document.getElementById('c-perfume').value,
+                size: document.getElementById('c-size').value,
+                price: document.getElementById('c-price').value
+            };
+            if(!data.user_id) { alert('آیدی عددی تلگرام مشتری الزامی است.'); return; }
+            tg.sendData(JSON.stringify(data));
+        }
+    </script>
+</body>
+</html>
+
+        h2, h3, h4 { margin-top: 0; color: var(--text-main); font-weight: 700; }
+        
+        input, select {
+            width: 100%;
+            padding: 10px 12px;
+            margin: 8px 0;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            box-sizing: border-box;
+            background-color: #f9fafb;
+            color: var(--text-main);
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background-color: #fff;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn:hover { background-color: var(--primary-hover); }
+        .btn-danger { background-color: #ef4444; }
+        .btn-danger:hover { background-color: #dc2626; }
+
+        .table-container { overflow-x: auto; margin-top: 10px; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: right;
+            font-size: 13px;
+        }
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        th { background-color: #f3f4f6; color: var(--text-main); font-weight: 600; }
+
+        .perfume-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        .perfume-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+        }
+        .perfume-card img {
+            width: 100%;
+            height: 110px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        .price { color: var(--success-color); font-weight: bold; font-size: 14px; margin: 6px 0; }
+
+        /* پنهان کردن صفحات در حالت پیش‌فرض */
+        #auth-screen, #main-content, #admin-panel { display: none; }
+    </style>
+</head>
+<body>
+
+    <div id="auth-screen" class="card">
+        <h3>🔑 ورود به باشگاه مشتریان</h3>
+        <p style="color: var(--text-muted); font-size: 13px;">لطفاً اطلاعات خود را وارد کنید تا در صورت عضویت، کاتالوگ باز شود.</p>
+        <input type="text" id="auth-name" placeholder="نام و نام خانوادگی">
+        <input type="tel" id="auth-phone" placeholder="شماره تلفن (مثال: 09131234567)">
+        <button class="btn" onclick="requestLogin()">ورود به فروشگاه</button>
+    </div>
+
+    <div id="main-content">
+        <div class="card" id="user-stats-card">
+            <h3>📊 سوابق خرید شما</h3>
+            <div class="table-container">
+                <table id="invoice-table">
+                    <thead>
+                        <tr>
+                            <th>تاریخ</th>
+                            <th>شرح کالا</th>
+                            <th>مبلغ (تومان)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="3" style="text-align:center; color:var(--text-muted);">تراکنشی ثبت نشده است</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <h3>🛍️ جدیدترین عطرهای مغازه</h3>
+        <div class="perfume-grid" id="perfume-list">
+            <div class="perfume-card">
+                <img src="https://images.unsplash.com/photo-1541643600914-78b084683601?w=400" alt="عطر">
+                <h4 style="margin:8px 0 4px 0; font-size:14px;">عطر کاتالوگ نمونه</h4>
+                <div class="price">موجود در مغازه</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="admin-panel">
+        <div class="card" style="border-top: 4px solid var(--primary-color);">
+            <h3 style="color: var(--primary-color);">👑 پنل مدیریت آقای هاشمی</h3>
+            
+            <h4>➕ اضافه/ویرایش مشتری و خرید حضوری</h4>
+            <input type="number" id="c-id" placeholder="آیدی عددی تلگرام مشتری">
+            <input type="text" id="c-name" placeholder="نام و نام خانوادگی">
+            <input type="tel" id="c-phone" placeholder="شماره تلفن">
+            <input type="text" id="c-perfume" placeholder="چه عطری خریده؟">
+            <input type="text" id="c-size" placeholder="حجم عطر (مثلاً 10 میل)">
+            <input type="number" id="c-price" placeholder="قیمت خرید (تومان)">
+            <button class="btn" onclick="adminManageCustomer('add')">ثبت خرید و مشتری</button>
+            <button class="btn btn-danger" style="margin-top: 8px;" onclick="adminManageCustomer('delete')">حذف کامل مشتری</button>
+        </div>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        
+        // آیدی عددی تلگرام شما برای مدیریت
         const ADMIN_ID = 1791538940; 
         const current_user_id = tg.initDataUnsafe.user ? tg.initDataUnsafe.user.id : 0;
 
