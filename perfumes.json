@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "name": "بلو شنل",
+    "brand": "Chanel",
+    "temp": "خنک",
+    "scent": "تلخ",
+    "job": "کارمند",
+    "price": "۴,۵۰۰,۰۰۰ تومان",
+    "image": "https://via.placeholder.com/150"
+  },
+  {
+    "id": 2,
+    "name": "ساواج دیور",
+    "brand": "Dior",
+    "temp": "معتدل",
+    "scent": "شیرین",
+    "job": "دانشجو",
+    "price": "۵,۲۰۰,۰۰۰ تومان",
+    "image": "https://via.placeholder.com/150"
+  },
+  {
+    "id": 3,
+    "name": "کرید اونتوس",
+    "brand": "Creed",
+    "temp": "خنک",
+    "scent": "ملایم",
+    "job": "پزشک/مهندس",
+    "price": "۷,۸۰۰,۰۰۰ تومان",
+    "image": "https://via.placeholder.com/150"
+  }
+]
