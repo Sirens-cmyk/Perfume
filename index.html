@@ -10,7 +10,6 @@
             --bg-dark: #0f0f12;
             --card-dark: #16161e;
             --gold: #d4af37;
-            --gold-hover: #aa882c;
             --text-light: #f3f4f6;
             --text-muted: #9ca3af;
             --border: #262633;
@@ -32,13 +31,7 @@
             border-bottom: 1px solid var(--border);
             margin-bottom: 24px;
         }
-        .header h1 {
-            font-size: 22px;
-            color: var(--gold);
-            margin: 0;
-            letter-spacing: 1px;
-            cursor: pointer;
-        }
+        .header h1 { font-size: 22px; color: var(--gold); margin: 0; letter-spacing: 1px; cursor: pointer; }
         .header p { font-size: 12px; color: var(--text-muted); margin: 4px 0 0 0; }
 
         .card {
@@ -75,10 +68,8 @@
             font-size: 14px;
             font-weight: bold;
             cursor: pointer;
-            transition: all 0.3s;
             margin-bottom: 8px;
         }
-        .btn:hover { opacity: 0.9; }
         .btn-danger { background: linear-gradient(135deg, var(--danger), #b91c1c); color: #fff; }
         .btn-secondary { background: transparent; color: var(--gold); border: 1px solid var(--gold); }
 
@@ -92,9 +83,7 @@
             align-items: center;
             border-right: 3px solid var(--gold);
         }
-        .invoice-details { display: flex; flex-direction: column; gap: 4px; }
         .invoice-name { font-weight: bold; font-size: 14px; }
-        .invoice-price { color: var(--gold); font-weight: bold; font-size: 14px; }
 
         .perfume-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
         .perfume-card {
@@ -115,54 +104,39 @@
             border-radius: 12px;
             margin-bottom: 12px;
             cursor: pointer;
-            transition: all 0.2s;
         }
-        .quiz-option:hover { border-color: var(--gold); background: #222230; }
 
-        #auth-screen, #main-shop, #admin-panel, #quiz-screen { display: none; }
+        /* حالت اولیه قفل صفحه */
+        #auth-screen { display: block; }
+        #main-shop, #admin-panel, #quiz-screen { display: none; }
     </style>
 </head>
 <body>
 
     <div class="header">
         <h1 onclick="triggerAdminCheck()">LUXURY PERFUME</h1>
-        <p>باشگاه مشتریان و ویترین اختصاصی آقای هاشمی</p>
+        <p>خانه عطر مجلل</p>
     </div>
 
     <div id="auth-screen" class="card">
-        <h3>🔑 ورود به خانه عطر</h3>
+        <h3>🔑 احراز هویت باشگاه مشتریان</h3>
+        <p style="color: var(--text-muted); font-size: 13px;">لطفاً مشخصات خود را جهت انطباق با لیست اعضا وارد کنید:</p>
         <input type="text" id="auth-name" placeholder="نام و نام خانوادگی">
         <input type="tel" id="auth-phone" placeholder="شماره تلفن (مثال: 09131234567)">
-        <button class="btn" onclick="requestLogin()">ورود به فروشگاه</button>
+        <button class="btn" onclick="requestLogin()">بررسی و ورود به فروشگاه</button>
     </div>
 
     <div id="main-shop">
         <div class="card" style="background: linear-gradient(45deg, #16161e, #251f12); border: 1px solid var(--gold);">
             <h3>✨ عطر اختصاصی تو کدومه؟</h3>
-            <p style="font-size: 12px; color: var(--text-muted); margin-top: -8px;">با پاسخ به ۵ سوال تخصصی، رایحه امضای خودت رو پیدا کن.</p>
             <button class="btn" onclick="startQuiz()">شروع تست عطر شناسی (۵ سوال)</button>
         </div>
 
         <h3>📊 سوابق خرید شما</h3>
-        <div class="invoice-list" id="invoice-rows">
-            <div class="invoice-item">
-                <div class="invoice-details"><span class="invoice-name">هنوز خریدی ثبت نشده</span></div>
-            </div>
-        </div>
+        <div class="invoice-list" id="invoice-rows"></div>
 
         <h3 style="margin-top: 24px;">🛍️ ویترین عطرهای برتر</h3>
-        <div class="perfume-grid">
-            <div class="perfume-card">
-                <img src="https://images.unsplash.com/photo-1541643600914-78b084683601?w=400" alt="Creed Aventus">
-                <div class="perfume-title">Creed Aventus</div>
-                <div class="perfume-price">موجود در مغازه</div>
-            </div>
-            <div class="perfume-card">
-                <img src="https://images.unsplash.com/photo-1594035910387-fea47794261f?w=400" alt="Sauvage Dior">
-                <div class="perfume-title">Sauvage Dior</div>
-                <div class="perfume-price">موجود در مغازه</div>
-            </div>
-        </div>
+        <div class="perfume-grid" id="perfume-list"></div>
     </div>
 
     <div id="quiz-screen" class="card">
@@ -179,7 +153,7 @@
         <input type="text" id="c-name" placeholder="نام و نام خانوادگی">
         <input type="tel" id="c-phone" placeholder="شماره تلفن">
         <input type="text" id="c-perfume" placeholder="نام عطر خریداری شده">
-        <input type="text" id="c-size" placeholder="حجم عطر (مثال: 50 میل)">
+        <input type="text" id="c-size" placeholder="حجم عطر (مثال: 10 میل)">
         <input type="number" id="c-price" placeholder="قیمت فاکتور (تومان)">
         <button class="btn" onclick="adminAction('admin_add_customer')">➕ ثبت مشتری و فاکتور خرید</button>
         <button class="btn btn-danger" onclick="adminAction('admin_delete_customer')">🗑️ حذف کامل مشتری و سوابق</button>
@@ -187,10 +161,10 @@
         <h4>🧪 مدیریت کاتالوگ عطرها (حذف و اضافه)</h4>
         <input type="text" id="p-name" placeholder="نام انگلیسی عطر">
         <input type="text" id="p-brand" placeholder="برند عطر (فارسی/انگلیسی)">
-        <input type="text" id="p-price" placeholder="قیمت عطر (مثال: موجود / ۲,۳۰۰,۰۰0)">
+        <input type="text" id="p-price" placeholder="قیمت عطر (مثال: موجود / ۴۵۰,۰۰۰)">
         <input type="text" id="p-img" placeholder="لینک عکس عطر">
-        <button class="btn" style="background: linear-gradient(135deg, #10b981, #059669); color:#000;" onclick="adminAction('admin_add_perfume')">✨ افزودن عطر به ویترین فروشگاه</button>
-        <button class="btn btn-danger" onclick="adminAction('admin_delete_perfume')">❌ حذف عطر از کاتالوگ (بر اساس نام)</button>
+        <button class="btn" style="background: linear-gradient(135deg, #10b981, #059669); color:#000;" onclick="adminAction('admin_add_perfume')">✨ افزودن عطر به ویترین</button>
+        <button class="btn btn-danger" onclick="adminAction('admin_delete_perfume')">❌ حذف عطر از کاتالوگ</button>
 
         <button class="btn btn-secondary" style="margin-top: 20px;" onclick="document.getElementById('admin-panel').style.display='none'; document.getElementById('main-shop').style.display='block';">خروج از پنل مدیریت</button>
     </div>
@@ -199,8 +173,6 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        document.getElementById('main-shop').style.display = 'block';
-
         let clickCount = 0;
         function triggerAdminCheck() {
             clickCount++;
@@ -208,19 +180,54 @@
                 clickCount = 0;
                 const password = prompt("رمز عبور مدیر را وارد کنید:");
                 if (password === "1234") {
+                    document.getElementById('auth-screen').style.display = 'none';
                     document.getElementById('main-shop').style.display = 'none';
                     document.getElementById('admin-panel').style.display = 'block';
                 } else { alert("رمز اشتباه است!"); }
             }
         }
 
-        // دیتابیس ۵ سوال تخصصی عطر شناسی
+        // ارتباط با بک‌اند برای گرفتن اطلاعات واقعی عطرها و فاکتورها بعد از تایید پایتون
+        window.addEventListener('message', function(event) {
+            try {
+                const res = JSON.parse(event.data);
+                if (res.status === "verified") {
+                    document.getElementById('auth-screen').style.display = 'none';
+                    document.getElementById('main-shop').style.display = 'block';
+                    
+                    // رندر فاکتورها
+                    const invDiv = document.getElementById('invoice-rows');
+                    invDiv.innerHTML = res.invoices.map(i => `
+                        <div class="invoice-item">
+                            <div class="invoice-details">
+                                <span class="invoice-name">🛍️ ${i.perfume} (${i.size})</span>
+                            </div>
+                            <span class="invoice-price">${i.price} تومان</span>
+                        </div>
+                    `).join('') || '<div class="invoice-item">هنوز فاکتوری ندارید</div>';
+
+                    // رندر عطرها
+                    const perfDiv = document.getElementById('perfume-list');
+                    perfDiv.innerHTML = res.perfumes.map(p => `
+                        <div class="perfume-card">
+                            <img src="${p.img || 'https://images.unsplash.com/photo-1541643600914-78b084683601?w=400'}" alt="${p.name}">
+                            <div class="perfume-title">${p.name}</div>
+                            <div class="perfume-price">${p.price}</div>
+                        </div>
+                    `).join('');
+                } else if(res.status === "failed") {
+                    alert("مشخصات شما در سیستم پیدا نشد. لطفا با ادمین هماهنگ کنید.");
+                }
+            } catch(e) {}
+        });
+
+        // ۵ سوال مسابقه عطرشناسی
         const quizData = [
             { q: "۱. طبع عطر مورد علاقه‌ت چطور باشه؟", options: ["خنک و تازه (تابستانی)", "گرم و عمیق (زمستانی)", "معتدل و چهارفصل"] },
             { q: "۲. کدوم گروه بویایی رو می‌پسندی؟", options: ["تلخ و چوبی/چرمی", "شیرین و گلی/میوه‌ای", "مرکباتی و تند ادویه‌ای"] },
-            { q: "۳. عطر رو بیشتر برای چه محیطی استفاده می‌کنی؟", options: ["قرارهای رسمی و بیزینسی", "استفاده روزمره و دانشگاه/باشگاه", "مهمانی‌های شبانه و خاص"] },
-            { q: "۴. فاکتور مهم برای شما در انتخاب عطر چیه؟", options: ["پخش بوی بسیار شدید (خط بو)", "ماندگاری طولانی روی لباس", "رایحه خاص و منحصربه‌فرد (نیش)"] },
-            { q: "۵. تیپ و استایل غالب شما چطوریه؟", options: ["کلاسیک و کت‌شلواری/رسمی", "اسپرت، کاژوال و راحت", "امروزی، مد روز و فشن"] }
+            { q: "۳. عطر رو بیشتر برای چه محیطی استفاده می‌کنی؟", options: ["قرارهای رسمی و بیزینسی", "استفاده روزمره و دانشگاه", "مهمانی‌های شبانه"] },
+            { q: "۴. فاکتور مهم برای شما در انتخاب عطر چیه؟", options: ["پخش بوی بسیار شدید", "ماندگاری طولانی", "رایحه خاص و منحصربه‌فرد"] },
+            { q: "۵. تیپ و استایل غالب شما چطوریه? ", options: ["کلاسیک و رسمی", "اسپرت و راحت", "امروزی و فشن"] }
         ];
         let currentQuestionIndex = 0;
 
@@ -236,7 +243,6 @@
             document.getElementById('quiz-question').innerText = currentQ.q;
             const optionsDiv = document.getElementById('quiz-options');
             optionsDiv.innerHTML = "";
-            
             currentQ.options.forEach(opt => {
                 const div = document.createElement('div');
                 div.className = 'quiz-option';
@@ -248,18 +254,13 @@
 
         function nextQuestion() {
             currentQuestionIndex++;
-            if (currentQuestionIndex < quizData.length) {
-                showQuestion();
-            } else {
-                document.getElementById('quiz-progress').innerText = "تحلیل نهایی انجام شد";
-                document.getElementById('quiz-question').innerText = "✨ عطر امضای پیشنهادی شما:";
+            if (currentQuestionIndex < quizData.length) { showQuestion(); } 
+            else {
                 document.getElementById('quiz-options').innerHTML = `
-                    <div style="text-align:center; padding: 10px 0;">
-                        <h2 style="color:var(--gold); margin: 10px 0;">Bleu De Chanel (بلو د شانل)</h2>
-                        <p style="font-size:13px; color:var(--text-light); line-height:20px;">با توجه به اولویت‌های شما، این رایحه تعادل بی‌نظیری از جذابیت رسمی، ماندگاری و خط بوی مدرن را برای استایل شما فراهم می‌کند.</p>
-                        <button class="btn" style="margin-top:20px;" onclick="location.reload()">بازگشت به ویترین فروشگاه</button>
-                    </div>
-                `;
+                    <div style="text-align:center;">
+                        <h2 style="color:var(--gold);">Bleu De Chanel</h2>
+                        <button class="btn" onclick="location.reload()">بازگشت</button>
+                    </div>`;
                 currentQuestionIndex = 0;
             }
         }
@@ -270,11 +271,10 @@
                 fullname: document.getElementById('auth-name').value,
                 phone: document.getElementById('auth-phone').value
             }));
-            tg.close();
         }
 
         function adminAction(actionName) {
-            const data = {
+            tg.sendData(JSON.stringify({
                 action: actionName,
                 user_id: document.getElementById('c-id').value,
                 fullname: document.getElementById('c-name').value,
@@ -286,9 +286,8 @@
                 p_brand: document.getElementById('p-brand').value,
                 p_price: document.getElementById('p-price').value,
                 p_img: document.getElementById('p-img').value
-            };
-            tg.sendData(JSON.stringify(data));
-            tg.close();
+            }));
+            alert("دستور با موفقیت به سرور ارسال شد.");
         }
     </script>
 </body>
