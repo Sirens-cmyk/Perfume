@@ -108,14 +108,19 @@
         }
 
         function renderShop(data) {
-            // رندر فاکتورهای ردیفی
-            const invDiv = document.getElementById('invoices-list');
+                    // رندر فاکتورهای ردیفی
+        const invDiv = document.getElementById('invoices-list');
+        if (data.invoices && data.invoices.length > 0) {
             invDiv.innerHTML = data.invoices.map(i => `
-                <div class="invoice-item">
-                    <span>🛍️ ${i.perfume} (${i.size})</span>
-                    <span style="color:var(--gold); font-weight:bold;">${i.price} تومان</span>
+                <div class="invoice-item" style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #222;">
+                    <span>🛍️ ${i.perfume} (${i.size || 'نامشخص'})</span>
+                    <span style="color:var(--gold); font-weight:bold;">${parseInt(i.price).toLocaleString()} ت</span>
                 </div>
-            `).join('') || '<div class="invoice-item">فاکتوری ثبت نشده است.</div>';
+            `).join('');
+        } else {
+            invDiv.innerHTML = '<div class="invoice-item" style="text-align:center; color:var(--text-muted);">فاکتوری ثبت نشده است.</div>';
+        }
+
 
             // رندر محصولات دیتابیس عطرها
             const grid = document.getElementById('grid-list');
