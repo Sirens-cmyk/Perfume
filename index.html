@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>فروشگاه عطر</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            --bg-color: #0a0a0a;
-            --panel-bg: #121212;
-            --border-color: #2c2c2c;
-            --gold: #d4af37;
+            --bg-color: #222222; /* رنگ دودی پس‌زمینه */
+            --panel-bg: #2a2a2a;
+            --border-color: #f5ebe0; /* رنگ کرم روشن برای خطوط */
             --text-color: #ffffff;
-            --text-muted: #aaaaaa;
+            --text-muted: #e3d5ca; /* کرم ملایم برای متون فرعی */
         }
 
         * {
@@ -25,9 +25,10 @@
             background-color: var(--bg-color);
             color: var(--text-color);
             padding: 15px;
+            display: none; /* تا زمان تأیید هویت مخفی می‌مونه */
         }
 
-        /* بخش فاکتور خرید (بالا) */
+        /* استایل کادربندی‌های وایرفریم */
         .section-container {
             border: 2px solid var(--border-color);
             padding: 15px;
@@ -42,14 +43,13 @@
             background-color: var(--bg-color);
             padding: 0 10px;
             font-size: 14px;
-            color: var(--text-muted);
+            color: var(--border-color);
         }
 
         .invoice-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 15px;
-            margin-bottom: 15px;
         }
 
         .invoice-inputs, .invoice-summary {
@@ -81,28 +81,6 @@
             font-size: 13px;
         }
 
-        /* بخش دکمه‌های عملیاتی فاکتور */
-        .invoice-actions {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 10px;
-        }
-
-        .btn {
-            background: transparent;
-            border: 1px solid var(--border-color);
-            color: var(--text-color);
-            padding: 8px;
-            cursor: pointer;
-            font-size: 13px;
-            transition: all 0.2s;
-        }
-
-        .btn:hover {
-            border-color: var(--gold);
-            color: var(--gold);
-        }
-
         /* جدول لیست عطرها */
         .table-wrapper {
             overflow-x: auto;
@@ -123,108 +101,190 @@
 
         th {
             background-color: var(--panel-bg);
-            color: var(--text-muted);
+            color: var(--border-color);
             font-weight: normal;
         }
 
-        .checkbox-custom {
+        /* دکمه‌های پایینی */
+        .btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--border-color);
+            padding: 10px;
             cursor: pointer;
-            accent-color: var(--gold);
+            font-size: 14px;
+            transition: all 0.2s;
         }
 
-        /* دکمه‌های خروجی پایین */
+        .btn:hover {
+            background-color: var(--border-color);
+            color: var(--bg-color);
+        }
+
         .bottom-actions {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
         }
+
+        #error-screen {
+            display: none;
+            text-align: center;
+            padding: 50px 20px;
+            color: #ff4d4d;
+            font-size: 16px;
+        }
     </style>
 </head>
 <body>
 
-    <div class="section-container">
-        <div class="section-title">فاکتور خرید</div>
-        <div class="invoice-grid">
-            <div class="invoice-inputs">
-                <div class="field-group">
-                    <label>نام مشتری :</label>
-                    <input type="text" id="cust-name">
+    <div id="app-content">
+        <!-- بخش فاکتور خرید -->
+        <div class="section-container">
+            <div class="section-title">فاکتور خرید</div>
+            <div class="invoice-grid">
+                <div class="invoice-inputs">
+                    <div class="field-group">
+                        <label>نام مشتری :</label>
+                        <input type="text" id="cust-name" readonly>
+                    </div>
+                    <div class="field-group">
+                        <label>شماره تلفن :</label>
+                        <input type="text" id="cust-phone" readonly>
+                    </div>
+                    <div class="field-group">
+                        <label>تاریخ :</label>
+                        <input type="text" id="invoice-date" readonly>
+                    </div>
                 </div>
-                <div class="field-group">
-                    <label>شماره تلفن :</label>
-                    <input type="text" id="cust-phone">
-                </div>
-                <div class="field-group">
-                    <label>تاریخ :</label>
-                    <input type="text" id="invoice-date" value="1405/04/10">
+                <div class="invoice-summary">
+                    <div class="field-group">
+                        <label>تعداد آیتم :</label>
+                        <input type="text" id="total-items" readonly value="0">
+                    </div>
+                    <div class="field-group">
+                        <label>جمع کل :</label>
+                        <input type="text" id="total-price" readonly value="0">
+                    </div>
+                    <div class="field-group">
+                        <label>تخفیف :</label>
+                        <input type="text" id="discount" readonly value="0">
+                    </div>
+                    <div class="field-group">
+                        <label>قابل پرداخت :</label>
+                        <input type="text" id="payable" readonly value="0" style="font-weight: bold; color: var(--border-color);">
+                    </div>
                 </div>
             </div>
-            <div class="invoice-summary">
-                <div class="field-group">
-                    <label>تعداد آیتم :</label>
-                    <input type="text" readonly value="0">
-                </div>
-                <div class="field-group">
-                    <label>جمع کل :</label>
-                    <input type="text" readonly value="0">
-                </div>
-                <div class="field-group">
-                    <label>تخفیف :</label>
-                    <input type="text" readonly value="0">
-                </div>
-                <div class="field-group">
-                    <label>قابل پرداخت :</label>
-                    <input type="text" readonly value="0" style="color: var(--gold); font-weight: bold;">
-                </div>
+        </div>
+
+        <!-- بخش لیست عطرها -->
+        <div class="section-container">
+            <div class="section-title">لیست عطرها</div>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ردیف</th>
+                            <th>نام عطر</th>
+                            <th>حجم</th>
+                            <th>قیمت (تومان)</th>
+                            <th>موجودی</th>
+                        </tr>
+                    </thead>
+                    <tbody id="perfume-table-body">
+                        <!-- دیتاها از بک‌اند لود می‌شوند -->
+                    </tbody>
+                </table>
             </div>
         </div>
-        <div class="invoice-actions">
-            <button class="btn">حذف مورد انتخاب</button>
-            <button class="btn">حذف همه</button>
-            <button class="btn" style="border-color: var(--gold); color: var(--gold);">تسویه</button>
+
+        <!-- دکمه‌های پایینی -->
+        <div class="bottom-actions">
+            <button class="btn" onclick="closeApp()">خروج</button>
+            <button class="btn" onclick="reloadData()">تازه سازی</button>
         </div>
     </div>
 
-    <div class="section-container">
-        <div class="section-title">لیست عطرها</div>
-        <div class="table-wrapper">
-            <table>
-                <thead>
-                    <tr>
-                        <th>ردیف</th>
-                        <th>نام عطر</th>
-                        <th>حجم</th>
-                        <th>قیمت (تومان)</th>
-                        <th>موجودی</th>
-                        <th>انتخاب</th>
-                    </tr>
-                </thead>
-                <tbody id="perfume-table-body">
-                    <tr>
-                        <td>۱</td>
-                        <td>دیور سواج</td>
-                        <td>100 ml</td>
-                        <td>7,900,000</td>
-                        <td>12</td>
-                        <td><input type="checkbox" class="checkbox-custom"></td>
-                    </tr>
-                    <tr>
-                        <td>۲</td>
-                        <td>بلو چنل</td>
-                        <td>100 ml</td>
-                        <td>8,200,000</td>
-                        <td>8</td>
-                        <td><input type="checkbox" class="checkbox-custom"></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+    <div id="error-screen">
+        <h3>دسترسی غیرمجاز</h3>
+        <p style="color: var(--text-muted); margin-top: 10px; font-size: 14px;">اطلاعات شما توسط ادمین ثبت نشده است. درخواست شما به مدیریت ارسال شد.</p>
     </div>
 
-    <div class="bottom-actions">
-        <button class="btn">خروج</button>
-        <button class="btn">تازه سازی</button>
-    </div>
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
 
+        // 👇👇 آدرس لوکال‌هاست‌ران رو دقیقاً اینجا وارد کن 👇👇
+        const SERVER_URL = "https://faf14128d445bd.lhr.life"; 
+
+        async function checkUserAccess() {
+            const user = tg.initDataUnsafe?.user;
+            if (!user) {
+                document.getElementById('error-screen').style.display = 'block';
+                document.getElementById('error-screen').innerText = "لطفاً برنامه را از داخل تلگرام باز کنید.";
+                return;
+            }
+
+            try {
+                const response = await fetch(`${SERVER_URL}/api/check-user/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        telegram_id: user.id,
+                        username: user.username || '',
+                        first_name: user.first_name || '',
+                        last_name: user.last_name || ''
+                    })
+                });
+                const data = await response.json();
+
+                if (data.allowed) {
+                    document.body.style.display = 'block';
+                    loadDashboardData(data.user_info, data.perfumes);
+                } else {
+                    document.getElementById('error-screen').style.display = 'block';
+                }
+            } catch (error) {
+                console.error("Error connecting to server:", error);
+                document.getElementById('error-screen').style.display = 'block';
+                document.getElementById('error-screen').innerText = "خطا در اتصال به سرور پایتون.";
+            }
+        }
+
+        function loadDashboardData(userInfo, perfumes) {
+            document.getElementById('cust-name').value = userInfo.name || '';
+            document.getElementById('cust-phone').value = userInfo.phone || '';
+            document.getElementById('invoice-date').value = userInfo.date || '';
+            document.getElementById('total-items').value = userInfo.total_items || 0;
+            document.getElementById('total-price').value = userInfo.total_price || 0;
+            document.getElementById('discount').value = userInfo.discount || 0;
+            document.getElementById('payable').value = userInfo.payable || 0;
+
+            const tbody = document.getElementById('perfume-table-body');
+            tbody.innerHTML = '';
+            perfumes.forEach((item, index) => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${item.name}</td>
+                        <td>${item.size}</td>
+                        <td>${item.price}</td>
+                        <td>${item.stock}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        function reloadData() {
+            checkUserAccess();
+        }
+
+        function closeApp() {
+            tg.close();
+        }
+
+        window.onload = checkUserAccess;
+    </script>
 </body>
 </html>
