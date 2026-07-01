@@ -2,200 +2,229 @@
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LUXURY PERFUME</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فروشگاه عطر</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&display=swap');
         :root {
-            --bg-dark: #0f0f1a;
-            --card-dark: rgba(255,255,255,0.06);
-            --gold: #eab308;
-            --text-light: #ffffff;
-            --text-muted: #aaa;
-            --border: rgba(234, 179, 8, 0.2);
+            --bg-color: #0a0a0a;
+            --panel-bg: #121212;
+            --border-color: #2c2c2c;
+            --gold: #d4af37;
+            --text-color: #ffffff;
+            --text-muted: #aaaaaa;
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Vazirmatn', sans-serif; background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 100%); color: white; min-height: 100vh; padding-bottom: 70px; }
-        header { background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(12px); padding: 15px; text-align: center; border-bottom: 1px solid rgba(234, 179, 8, 0.3); }
-        .logo { font-size: 24px; font-weight: 700; color: var(--gold); }
-        .container { padding: 15px; }
-        .card { background: var(--card-dark); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-bottom: 20px; }
-        input { width: 100%; padding: 12px 15px; margin-bottom: 15px; background: rgba(0, 0, 0, 0.4); border: 1px solid var(--border); border-radius: 12px; color: #fff; font-family: inherit; }
-        .btn { width: 100%; background: linear-gradient(90deg, var(--gold), #f59e0b); color: #0f0f1a; border: none; padding: 13px; border-radius: 12px; font-weight: 700; font-size: 15px; cursor: pointer; }
-        
-        /* استایل ردیفی فاکتورها */
-        .invoice-item { background: rgba(0,0,0,0.3); border-right: 4px solid var(--gold); padding: 12px; border-radius: 10px; margin-bottom: 10px; font-size: 13px; display: flex; justify-content: space-between; }
-        
-        /* کاتالوگ عطرها */
-        .top-bar { padding: 15px 0; overflow-x: auto; white-space: nowrap; margin-bottom: 15px; scrollbar-width: none; }
-        .product-strip { display: flex; gap: 12px; padding: 0 15px; }
-        .strip-item { width: 90px; text-align: center; }
-        .strip-img { width: 75px; height: 75px; border-radius: 18px; object-fit: cover; border: 2px solid var(--gold); }
-        .strip-name { font-size: 11px; margin-top: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-        .products-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
-        .product-card { background: var(--card-dark); border-radius: 20px; overflow: hidden; border: 1px solid var(--border); }
-        .product-img { width: 100%; height: 140px; object-fit: cover; }
-        .product-info { padding: 10px; text-align: center; }
-        .product-name { font-size: 13px; font-weight: 600; }
-        .product-price { color: var(--gold); font-size: 13px; font-weight: 700; margin-top: 4px; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
 
-        .quiz-option { background: rgba(255,255,255,0.05); padding: 14px; border: 1px solid var(--border); border-radius: 12px; margin-bottom: 12px; cursor: pointer; }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 15px;
+        }
 
-        .app-page { display: none; }
-        #page-auth { display: block; }
+        /* بخش فاکتور خرید (بالا) */
+        .section-container {
+            border: 2px solid var(--border-color);
+            padding: 15px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .section-title {
+            position: absolute;
+            top: -12px;
+            right: 15px;
+            background-color: var(--bg-color);
+            padding: 0 10px;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .invoice-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .invoice-inputs, .invoice-summary {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .field-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .field-group label {
+            font-size: 13px;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        .field-group input {
+            width: 100%;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: #fff;
+            padding: 6px;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        /* بخش دکمه‌های عملیاتی فاکتور */
+        .invoice-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+        }
+
+        .btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        /* جدول لیست عطرها */
+        .table-wrapper {
+            overflow-x: auto;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 10px 5px;
+        }
+
+        th {
+            background-color: var(--panel-bg);
+            color: var(--text-muted);
+            font-weight: normal;
+        }
+
+        .checkbox-custom {
+            cursor: pointer;
+            accent-color: var(--gold);
+        }
+
+        /* دکمه‌های خروجی پایین */
+        .bottom-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
     </style>
 </head>
 <body>
 
-    <header><div class="logo">🪻 LUXURY PERFUME</div></header>
-
-    <div class="container">
-        <div id="page-auth" class="app-page">
-            <div class="card">
-                <h3>🔑 ورود به باشگاه مشتریان</h3>
-                <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 15px;">دسترسی به ویترین تنها برای اعضای ثبت‌شده امکان‌پذیر است.</p>
-                <input type="text" id="auth-name" placeholder="نام و نام خانوادگی">
-                <input type="tel" id="auth-phone" placeholder="شماره همراه (مثال: 09131234567)">
-                <button class="btn" onclick="verifyUser()">بررسی دسترسی و ورود</button>
+    <div class="section-container">
+        <div class="section-title">فاکتور خرید</div>
+        <div class="invoice-grid">
+            <div class="invoice-inputs">
+                <div class="field-group">
+                    <label>نام مشتری :</label>
+                    <input type="text" id="cust-name">
+                </div>
+                <div class="field-group">
+                    <label>شماره تلفن :</label>
+                    <input type="text" id="cust-phone">
+                </div>
+                <div class="field-group">
+                    <label>تاریخ :</label>
+                    <input type="text" id="invoice-date" value="1405/04/10">
+                </div>
+            </div>
+            <div class="invoice-summary">
+                <div class="field-group">
+                    <label>تعداد آیتم :</label>
+                    <input type="text" readonly value="0">
+                </div>
+                <div class="field-group">
+                    <label>جمع کل :</label>
+                    <input type="text" readonly value="0">
+                </div>
+                <div class="field-group">
+                    <label>تخفیف :</label>
+                    <input type="text" readonly value="0">
+                </div>
+                <div class="field-group">
+                    <label>قابل پرداخت :</label>
+                    <input type="text" readonly value="0" style="color: var(--gold); font-weight: bold;">
+                </div>
             </div>
         </div>
-
-        <div id="page-shop" class="app-page">
-            <div class="card" style="background: linear-gradient(45deg, #16161e, #251f12);">
-                <h4 style="color: var(--gold);">✨ عطر اختصاصی تو کدومه؟</h4>
-                <button class="btn" style="margin-top: 10px; padding: 8px;" onclick="startQuiz()">تست عطرشناسی (۵ سوال)</button>
-            </div>
-            
-            <h3 style="margin-bottom: 10px;">📊 سوابق خرید شما</h3>
-            <div id="invoices-list"></div>
-
-            <h3 style="margin: 20px 0 10px 0;">🛍️ ویترین محصولات</h3>
-            <div class="top-bar"><div class="product-strip" id="strip-list"></div></div>
-            <div class="products-grid" id="grid-list"></div>
-        </div>
-
-        <div id="page-quiz" class="app-page class card">
-            <p id="quiz-progress" style="color: var(--gold); font-size: 12px; margin-bottom: 5px;"></p>
-            <h3 id="quiz-question"></h3>
-            <div id="quiz-options"></div>
+        <div class="invoice-actions">
+            <button class="btn">حذف مورد انتخاب</button>
+            <button class="btn">حذف همه</button>
+            <button class="btn" style="border-color: var(--gold); color: var(--gold);">تسویه</button>
         </div>
     </div>
 
-    <script>
-        const SERVER_URL = "https://32959d36dacfe7.lhr.life";
-            
+    <div class="section-container">
+        <div class="section-title">لیست عطرها</div>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ردیف</th>
+                        <th>نام عطر</th>
+                        <th>حجم</th>
+                        <th>قیمت (تومان)</th>
+                        <th>موجودی</th>
+                        <th>انتخاب</th>
+                    </tr>
+                </thead>
+                <tbody id="perfume-table-body">
+                    <tr>
+                        <td>۱</td>
+                        <td>دیور سواج</td>
+                        <td>100 ml</td>
+                        <td>7,900,000</td>
+                        <td>12</td>
+                        <td><input type="checkbox" class="checkbox-custom"></td>
+                    </tr>
+                    <tr>
+                        <td>۲</td>
+                        <td>بلو چنل</td>
+                        <td>100 ml</td>
+                        <td>8,200,000</td>
+                        <td>8</td>
+                        <td><input type="checkbox" class="checkbox-custom"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-          // آدرس سرور پایتون رو اینجا بذار هم
+    <div class="bottom-actions">
+        <button class="btn">خروج</button>
+        <button class="btn">تازه سازی</button>
+    </div>
 
-        async function verifyUser() {
-            const phone = document.getElementById('auth-phone').value.trim();
-            if(!phone) return alert("لطفاً شماره را وارد کنید");
-
-            try {
-                const response = await fetch(`${SERVER_URL}/api/shop-data?phone=${phone}`);
-                const data = await response.json();
-                
-                if (data.status === "verified") {
-                    document.getElementById('page-auth').style.display = 'none';
-                    document.getElementById('page-shop').style.display = 'block';
-                    renderShop(data);
-                } else {
-                    alert("مشخصات شما در سیستم پیدا نشد.");
-                }
-            } catch (e) { alert("خطا در اتصال به سرور ترموکس"); }
-        }
-
-        function renderShop(data) {
-                    // رندر فاکتورهای ردیفی
-        const invDiv = document.getElementById('invoices-list');
-        if (data.invoices && data.invoices.length > 0) {
-            invDiv.innerHTML = data.invoices.map(i => `
-                <div class="invoice-item" style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #222;">
-                    <span>🛍️ ${i.perfume} (${i.size || 'نامشخص'})</span>
-                    <span style="color:var(--gold); font-weight:bold;">${parseInt(i.price).toLocaleString()} ت</span>
-                </div>
-            `).join('');
-        } else {
-            invDiv.innerHTML = '<div class="invoice-item" style="text-align:center; color:var(--text-muted);">فاکتوری ثبت نشده است.</div>';
-        }
-
-
-            // رندر محصولات دیتابیس عطرها
-            const grid = document.getElementById('grid-list');
-            const strip = document.getElementById('strip-list');
-            grid.innerHTML = ''; strip.innerHTML = '';
-
-            data.perfumes.forEach(p => {
-                grid.innerHTML += `
-                    <div class="product-card">
-                        <img src="${p.img}" class="product-img">
-                        <div class="product-info">
-                            <div class="product-name">${p.name}</div>
-                            <div class="product-price">${p.price} ت</div>
-                        </div>
-                    </div>`;
-                strip.innerHTML += `
-                    <div class="strip-item">
-                        <img src="${p.img}" class="strip-img">
-                        <div class="strip-name">${p.name}</div>
-                    </div>`;
-            });
-        }
-
-        // منطق ۵ سوال مسابقه
-        const quizData = [
-            { q: "۱. طبع عطر مورد علاقه‌ت چطور باشه؟", options: ["خنک و تابستانی", "گرم و زمستانی", "معتدل و چهارفصل"] },
-            { q: "۲. کدوم گروه بویایی رو می‌پسندی؟", options: ["تلخ و چوبی/چرمی", "شیرین و گلی", "مرکباتی و ادویه‌ای"] },
-            { q: "۳. عطر رو بیشتر برای چه محیطی می‌خوای؟", options: ["قرارهای رسمی", "استفاده روزمره", "مهمانی شبانه"] },
-            { q: "۴. فاکتور مهم برای شما در انتخاب عطر چیه؟", options: ["پخش بوی شدید", "ماندگاری طولانی", "رایحه خاص و نیش"] },
-            { q: "۵. تیپ و استایل غالب شما چطوریه؟", options: ["کلاسیک و رسمی", "اسپرت و راحت", "امروزی و فشن"] }
-        ];
-        let currentQ = 0;
-
-        function startQuiz() {
-            document.getElementById('page-shop').style.display = 'none';
-            document.getElementById('page-quiz').style.display = 'block';
-            showQuestion();
-        }
-
-        function showQuestion() {
-            const q = quizData[currentQ];
-            document.getElementById('quiz-progress').innerText = `سوال ${currentQ + 1} از ۵`;
-            document.getElementById('quiz-question').innerText = q.q;
-            const optDiv = document.getElementById('quiz-options');
-            optDiv.innerHTML = '';
-            q.options.forEach(o => {
-                const d = document.createElement('div');
-                d.className = 'quiz-option';
-                d.innerText = o;
-                d.onclick = () => {
-                    currentQ++;
-                    if(currentQ < quizData.length) showQuestion();
-                    else showResult();
-                };
-                optDiv.appendChild(d);
-            });
-        }
-
-                function showResult() {
-            document.getElementById('quiz-question').innerText = "✨ عطر پیشنهادی شما:";
-            document.getElementById('quiz-options').innerHTML = `
-                <div style="text-align:center; padding:15px 0;">
-                    <h2 style="color:var(--gold); margin-bottom:10px;">Bleu De Chanel</h2>
-                    <p style="font-size:13px; color:var(--text-muted);">هماهنگی کامل با استایل و روحیات شما.</p>
-                    <button class="btn" style="margin-top:20px;" onclick="backToShopFromQuiz()">بازگشت به فروشگاه</button>
-                </div>`;
-        }
-
-        // 👈 این تابع جدید رو هم دقیقاً زیر تابع بالا اضافه کن
-        function backToShopFromQuiz() {
-            currentQ = 0; // صفر کردن شمارنده سوالات برای دفعه بعدی
-            document.getElementById('page-quiz').style.display = 'none'; // مخفی کردن بخش سوالات
-            document.getElementById('page-shop').style.display = 'block'; // باز کردن صفحه اصلی فروشگاه
-        }
-
-    </script>
 </body>
 </html>
